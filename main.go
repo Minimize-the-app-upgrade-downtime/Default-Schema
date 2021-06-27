@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
 )
 
 //User defines model for storing account details in database
@@ -32,11 +31,11 @@ type employee struct {
 	LastName       string `json:"lastName,omitempty"`
 	Email          string `json:"email,omitempty"`
 	JobTitle       string `json:"job,omitempty"`
-	
+
 }
 
 func main() {
-	fmt.Println("Default Schema Change up")
+	fmt.Println("Schema Change up")
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", changeRequestForUpdatedVersion)
 	http.ListenAndServe(":50002", mux)
@@ -44,15 +43,17 @@ func main() {
 
 func changeRequestForUpdatedVersion(w http.ResponseWriter, r *http.Request) {
 	log.Println("POST request received from localhost:50000")
-
 	if r.URL.Path == "/addFormOffice" {
 		dbOffice := office{} //initialize
-		
+		//Parse json request body and use it to set fields on db
 		err := json.NewDecoder(r.Body).Decode(&dbOffice)
 		fmt.Println(dbOffice)
 		if err != nil {
 			panic(err)
 		}
+		
+
+		//Marshal or convert user object back to json and write to response
 		dbJson, err := json.Marshal(dbOffice)
 		if err != nil {
 			panic(err)
@@ -75,6 +76,8 @@ func changeRequestForUpdatedVersion(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err)
 		}
+		
+		//Marshal or convert user object back to json and write to response
 		dbJson, err := json.Marshal(dbEmp)
 		if err != nil {
 			panic(err)
